@@ -114,11 +114,14 @@ export const AffiliationGuide: React.FC<AffiliationGuideProps> = ({ isActive, on
     };
 
     if (isActive) {
+      // Reset isReady when step changes
+      setIsReady(false);
+
       if (targetId) {
         const checkElement = () => {
           const element = document.getElementById(targetId);
-          // For tooltips, we wait until the element is in DOM AND useGuidePosition has calculated its rect
-          if (element && (!isTooltipStep || targetRect)) {
+          // For tooltips, we wait until the element is in DOM
+          if (element) {
             // Smooth scroll with offset for better visibility
             const yOffset = -200; 
             const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
@@ -135,7 +138,7 @@ export const AffiliationGuide: React.FC<AffiliationGuideProps> = ({ isActive, on
         };
 
         if (!checkElement()) {
-          // If element not found or rect not ready, poll for it
+          // If element not found, poll for it
           activeInterval = window.setInterval(() => {
             if (checkElement()) {
               if (activeInterval) clearInterval(activeInterval);
@@ -156,7 +159,7 @@ export const AffiliationGuide: React.FC<AffiliationGuideProps> = ({ isActive, on
     }
 
     return cleanup;
-  }, [isActive, targetId, step, targetRect, isTooltipStep]);
+  }, [isActive, targetId, step]); // Removed targetRect and isTooltipStep from dependencies
 
   // Listen for clicks on the target to advance (only for steps without a "Next" button)
   useEffect(() => {
@@ -190,7 +193,7 @@ export const AffiliationGuide: React.FC<AffiliationGuideProps> = ({ isActive, on
 
   const messages = [
     "Bienvenue dans MZ+. Pour commencer à générer des revenus, tu dois suivre les étapes dans l’ordre. Clique sur \"Business\".",
-    "Félicitations ! Tu as ouvert le pôle Business. 🎯\n\nC'est ici que tu vas piloter tes revenus et tes commissions.",
+    "Félicitations ! Tu as ouvert le pôle Business. 🎯\nC'est ici qu'il y a les différents moyens de gagner de l'argent avec MZ+",
     "Pour commencer simplement, clique sur \"Affiliation\".\n\nC’est la méthode la plus rapide pour encaisser tes premiers gains.",
     "Excellent choix ! 🚀\n\nL'interface d'affiliation est maintenant active. Tu vas pouvoir choisir tes produits.",
     "👉 Clique sur \"Voir les produits à promouvoir\".\n\nC’est ici que tu vas accéder au catalogue réel des produits MZ+.",

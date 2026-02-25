@@ -8,6 +8,7 @@ import { RpaStats } from './RpaStats.tsx';
 import { RpaHistory } from './RpaHistory.tsx';
 import { RpaCard } from './RpaCard.tsx';
 import { ConversionModal } from '../../UI.tsx';
+import { RPAGuide } from './guide/RPAGuide.tsx';
 
 interface RpaDashboardProps {
   profile: UserProfile | null;
@@ -21,8 +22,21 @@ export const RpaDashboard: React.FC<RpaDashboardProps> = ({ profile, onRefresh, 
   const [loading, setLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [isGuideActive, setIsGuideActive] = useState(false);
 
   const isMzPlus = profile?.user_level === 'niveau_mz_plus';
+
+  useEffect(() => {
+    // Trigger guide after 3 seconds if not completed
+    // Removed isMzPlus check to allow all users to see the guide (or for easier testing)
+    const guideCompleted = localStorage.getItem('mz_rpa_guide_v1_completed');
+    if (!guideCompleted) {
+      const timer = setTimeout(() => {
+        setIsGuideActive(true);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   const fetchRpaData = useCallback(async () => {
     if (!profile?.id) return;
@@ -181,6 +195,11 @@ export const RpaDashboard: React.FC<RpaDashboardProps> = ({ profile, onRefresh, 
            MZ+ Verification System v5.2
          </p>
       </footer>
+
+      <RPAGuide 
+        isActive={isGuideActive} 
+        onComplete={() => setIsGuideActive(false)} 
+      />
     </RpaLayout>
   );
 };
