@@ -131,4 +131,4 @@ export interface ProductStat {
   clicks: number;
 }
 
-export type TabId = 'dashboard' | 'revenus' | 'affiliation' | 'team' | 'admin' | 'rpa' | 'coaching' | 'formation' | 'upgrade' | 'suggestions' | 'private_group' | 'community' | 'private_chat' | 'recompense' | 'flash_offer' | 'admin_push' | 'private_messaging' | 'luna_chat';
+export type TabId = 'dashboard' | 'revenus' | 'affiliation' | 'team' | 'admin' | 'rpa' | 'coaching' | 'formation' | 'upgrade' | 'suggestions' | 'private_group' | 'community' | 'private_chat' | 'recompense' | 'flash_offer' | 'admin_push' | 'private_messaging' | 'luna_chat' | 'guides';

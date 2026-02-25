@@ -26,8 +26,8 @@ export const ReferralTools: React.FC<Props> = ({ referralCode }) => {
                <Zap size={32} fill="currentColor" className="animate-pulse" />
             </div>
             <div>
-               <h3 className="text-xl font-black uppercase text-white tracking-tighter">Votre Lien de Fortune</h3>
-               <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-[0.3em] mt-1">Diffusez ce lien pour bâtir votre réseau</p>
+               <h3 className="text-xl font-black uppercase text-white tracking-tighter">Votre Lien de Parrainage</h3>
+               <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-[0.3em] mt-1">Diffusez ce lien pour parrainer de nouveaux membres</p>
             </div>
          </div>
 

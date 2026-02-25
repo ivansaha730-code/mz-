@@ -112,14 +112,6 @@ export const RpaDashboard: React.FC<RpaDashboardProps> = ({ profile, onRefresh, 
          </div>
          
          <div className="flex flex-col items-end gap-4">
-            {onStartGuide && (
-              <button 
-                onClick={onStartGuide}
-                className="text-white font-black uppercase text-[10px] tracking-[0.2em] flex items-center gap-2 hover:text-purple-400 transition-colors"
-              >
-                <HelpCircle size={14} className="text-purple-500" /> REVOIR LE GUIDE
-              </button>
-            )}
             <div id="rpa-cashout-btn">
                <button 
                  onClick={() => isMzPlus ? alert("Préparation du virement...") : setShowPremiumModal(true)}
@@ -192,6 +184,27 @@ export const RpaDashboard: React.FC<RpaDashboardProps> = ({ profile, onRefresh, 
            MZ+ Verification System v5.2
          </p>
       </footer>
+
+      {/* Floating Guide Button - Maximum Visibility */}
+      {onStartGuide && (
+        <button 
+          onClick={onStartGuide}
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-6 py-4 bg-white text-black rounded-full font-black uppercase text-[10px] tracking-widest shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:scale-105 active:scale-95 transition-all border-2 border-purple-600 animate-bounce-subtle"
+        >
+          <HelpCircle size={18} className="text-purple-600" />
+          <span>Guide RPA</span>
+        </button>
+      )}
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes bounce-subtle {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-5px); }
+        }
+        .animate-bounce-subtle {
+          animation: bounce-subtle 2s infinite ease-in-out;
+        }
+      `}} />
     </RpaLayout>
   );
 };

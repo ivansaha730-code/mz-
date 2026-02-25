@@ -16,7 +16,8 @@ import {
   Menu,
   Coins,
   Briefcase,
-  Settings
+  Settings,
+  HelpCircle
 } from 'lucide-react';
 import { GoldText, EliteBadge } from './UI.tsx';
 import { TabId, UserProfile } from '../types.ts';
@@ -51,6 +52,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     { id: 'recompense' as TabId, label: "L'Arène Élite", icon: Trophy },
     { id: 'luna_chat' as TabId, label: 'Luna AI', icon: Sparkles },
     { id: 'private_chat' as TabId, label: 'Cercle Privé', icon: MessageSquare },
+    { id: 'guides' as TabId, label: 'Guides & Aide', icon: HelpCircle },
   ];
 
   const handleLogout = async () => {

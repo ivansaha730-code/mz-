@@ -18,10 +18,10 @@ export const ReferralStats: React.FC<Props> = ({ teamCount }) => {
             <Users size={36} strokeWidth={2.5} />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase text-neutral-500 tracking-[0.2em] mb-1">Impact du Réseau</p>
+            <p className="text-[10px] font-black uppercase text-neutral-500 tracking-[0.2em] mb-1">Statistiques Parrainage</p>
             <div className="flex items-baseline gap-3">
                <p className="text-5xl font-black text-white font-mono tracking-tighter">{teamCount}</p>
-               <p className="text-xs font-black text-yellow-600 uppercase tracking-widest">Partenaires</p>
+               <p className="text-xs font-black text-yellow-600 uppercase tracking-widest">Filleuls</p>
             </div>
           </div>
         </div>

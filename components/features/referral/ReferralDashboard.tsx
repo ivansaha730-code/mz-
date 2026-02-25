@@ -42,7 +42,7 @@ export const ReferralDashboard: React.FC<Props> = ({ profile, teamCount }) => {
   return (
     <ReferralLayout 
       title="Parrainage" 
-      subtitle="Suivez la croissance de votre empire et gérez vos partenaires."
+      subtitle="Gérez vos parrainages et suivez vos gains."
     >
       <div className="space-y-10">
         <ReferralStats teamCount={teamCount} />

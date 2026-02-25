@@ -20,18 +20,18 @@ export const ReferralList: React.FC<Props> = ({ members }) => {
       <ReferralCard className="p-0 overflow-hidden bg-[#080808]">
         <div className="p-6 border-b border-white/5 bg-black/20 flex items-center justify-between">
            <h4 className="text-xs font-black uppercase text-white tracking-widest flex items-center gap-3">
-             <UserCheck size={16} className="text-yellow-600" /> Journal du Réseau
+             <UserCheck size={16} className="text-yellow-600" /> Journal du Parrainage
            </h4>
-           <span className="text-[9px] font-black text-neutral-600 uppercase tracking-widest">{members.length} Partenaires</span>
+           <span className="text-[9px] font-black text-neutral-600 uppercase tracking-widest">{members.length} Filleuls</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="bg-black/40 text-[9px] font-black uppercase text-neutral-500 border-b border-white/5">
-                <th className="p-6 tracking-widest">Identité</th>
+                <th className="p-6 tracking-widest">Identité du Filleul</th>
                 <th className="p-6 tracking-widest">Status Niveau</th>
-                <th className="p-6 text-right tracking-widest">Date d'entrée</th>
+                <th className="p-6 text-right tracking-widest">Date de Parrainage</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
@@ -40,7 +40,7 @@ export const ReferralList: React.FC<Props> = ({ members }) => {
                   <td colSpan={3} className="p-20 text-center">
                      <div className="flex flex-col items-center gap-4 opacity-20">
                         <Shield size={48} strokeWidth={1} className="text-yellow-600" />
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em]">En attente de nouveaux membres</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em]">En attente de nouveaux parrainages</p>
                      </div>
                   </td>
                 </tr>

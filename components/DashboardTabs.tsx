@@ -28,6 +28,7 @@ import { AcademieMain } from './features/formation/AcademieMain.tsx';
 import { RpaDashboard } from './features/rpa/RpaDashboard.tsx';
 import { CoachingDashboard } from './features/coaching/CoachingDashboard.tsx';
 import { ReferralDashboard } from './features/referral/ReferralDashboard.tsx';
+import { GuidesTab as GuidesTabComponent } from './GuidesTab.tsx';
 
 type HubCategory = 'main' | 'business' | 'academy' | 'community';
 
@@ -317,4 +318,12 @@ export const UpgradeTab: React.FC = () => (
       </p>
     </div>
   </div>
+);
+
+export const GuidesTab: React.FC<any> = ({ onStartAffiliationGuide, onStartRPAGuide, onStartTeamGuide }) => (
+  <GuidesTabComponent 
+    onStartAffiliationGuide={onStartAffiliationGuide} 
+    onStartRPAGuide={onStartRPAGuide} 
+    onStartTeamGuide={onStartTeamGuide} 
+  />
 );

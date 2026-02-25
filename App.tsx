@@ -13,7 +13,8 @@ import {
   CoachingTab, 
   FormationTab, 
   UpgradeTab, 
-  SuggestionsTab
+  SuggestionsTab,
+  GuidesTab
 } from './components/DashboardTabs.tsx';
 import { RewardFeature } from './components/features/programme-recompense/RewardFeature.tsx';
 import { AffiliationSystem } from './components/AffiliationSystem.tsx';
@@ -27,6 +28,7 @@ import { PushDisplay } from './components/features/admin-push-notifications/Push
 import { AnnouncementOverlay } from './components/features/marketing-announcements/AnnouncementOverlay.tsx';
 import { AffiliationGuide } from './components/guides/AffiliationGuide.tsx';
 import { RPAGuide } from './components/guides/RPAGuide.tsx';
+import { TeamGuide } from './components/guides/TeamGuide.tsx';
 import { SlideNotificationAffiliation } from './components/features/SlideNotificationAffiliation.tsx';
 
 const ADMIN_EMAILS = [
@@ -49,6 +51,7 @@ const App: React.FC = () => {
   const [purchaseStep, setPurchaseStep] = useState<'view' | 'processing' | 'success'>('view');
   const [isGuideActive, setIsGuideActive] = useState(false);
   const [isRPAGuideActive, setIsRPAGuideActive] = useState(false);
+  const [isTeamGuideActive, setIsTeamGuideActive] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -147,6 +150,12 @@ const App: React.FC = () => {
       }, 800);
       return () => clearTimeout(timer);
     }
+    if (activeTab === 'team' && !localStorage.getItem('mz_team_guide_completed')) {
+      const timer = setTimeout(() => {
+        setIsTeamGuideActive(true);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
   }, [activeTab]);
 
   const triggerRefresh = () => { if (session?.user?.id) fetchUserData(session.user.id, session.user.email); };
@@ -202,6 +211,10 @@ const App: React.FC = () => {
         isActive={isRPAGuideActive} 
         onComplete={() => setIsRPAGuideActive(false)} 
       />
+      <TeamGuide 
+        isActive={isTeamGuideActive} 
+        onComplete={() => setIsTeamGuideActive(false)} 
+      />
       {activeTab === 'recompense' && <RewardFeature profile={userProfile} />}
       {activeTab === 'private_chat' && <EspacePrive profile={userProfile} />}
       {activeTab === 'private_messaging' && <PrivateMessagingMain profile={userProfile} />}
@@ -222,6 +235,25 @@ const App: React.FC = () => {
         />
       )}
       {activeTab === 'suggestions' && <SuggestionsTab profile={userProfile} />}
+      {activeTab === 'guides' && (
+        <GuidesTab 
+          onStartAffiliationGuide={() => {
+            localStorage.removeItem('mz_guide_completed');
+            setActiveTab('dashboard');
+            setIsGuideActive(true);
+          }}
+          onStartRPAGuide={() => {
+            localStorage.removeItem('mz_rpa_guide_completed');
+            setActiveTab('rpa');
+            setIsRPAGuideActive(true);
+          }}
+          onStartTeamGuide={() => {
+            localStorage.removeItem('mz_team_guide_completed');
+            setActiveTab('team');
+            setIsTeamGuideActive(true);
+          }}
+        />
+      )}
       {activeTab === 'upgrade' && <UpgradeTab />}
       {activeTab === 'luna_chat' && <LunaChatPage profile={userProfile} onUpgrade={() => setActiveTab('flash_offer')} />}
       {activeTab === 'admin' && isAdmin && <AdminPanel adminProfile={userProfile} lastUpdateSignal={lastUpdateSignal} onRefresh={triggerRefresh} />}

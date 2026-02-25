@@ -82,7 +82,7 @@ export const RPAGuide: React.FC<RPAGuideProps> = ({ isActive, onComplete }) => {
     "Comment gagner de l’argent avec le RPA ?\n\n👉 C’est très simple :\n\nCopie le lien de la vidéo\n(TikTok / Instagram / Facebook)\navec laquelle tu veux être rémunéré.",
     "Colle le lien de la vidéo ici dans cette section.",
     "👉 Après avoir collé le lien de la vidéo,\nclique sur \"Valider ma vidéo\"",
-    "Après la soumission de ta vidéo,\nl’algorithme MZ+ va l’analyser.\n\nLes points (ou récompenses) seront attribués en fonction de la performance de ta vidéo.\n\n💡 Exemple :\n\nUne vidéo qui atteint 10 000 vues\npeut te rapporter jusqu’à 1 000 FCFA.",
+    "Après la soumission de ta vidéo,\nl’algorithme MZ+ va l’analyser.\n\nLes points (ou récompenses) seront attribués en fonction de la performance de ta vidéo.\n\n💡 Exemple :\n\nUne vidéo qui atteint 10 000 vues\npeut te rapporter jusqu’à 1 000 POINT .",
     "Voici où tu pourras voir\ntes points accumulés.",
     "1 point vaut généralement 5 FCFA.\n\n👉 Une fois tes points accumulés,\ntu peux les convertir en argent\net les retirer directement via Mobile Money.\n\n💡 Clique simplement sur\n\"Retirer mes gains\"\n\npour recevoir ton argent en toute sécurité."
   ];
