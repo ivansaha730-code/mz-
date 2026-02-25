@@ -1,115 +1,148 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Sparkles, Lock, TrendingUp } from 'lucide-react';
+import { X, Lightbulb, Lock, ChevronRight } from 'lucide-react';
+
+interface SlideNotificationAffiliationProps {
+  activeTab: string;
+  onUpgrade: () => void;
+}
 
 /**
- * SlideNotificationAffiliation
- * A premium notification for the Affiliation section.
- * Appears only from the 2nd visit onwards.
+ * SlideNotificationAffiliation - A premium notification for the Affiliation section.
+ * Appears on the second visit or more to the affiliation tab.
  */
-export const SlideNotificationAffiliation: React.FC = () => {
+export const SlideNotificationAffiliation: React.FC<SlideNotificationAffiliationProps> = ({ activeTab, onUpgrade }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [hasBeenClosed, setHasBeenClosed] = useState(false);
+  const [hasBeenClosedInSession, setHasBeenClosedInSession] = useState(false);
 
   useEffect(() => {
-    // Logic for tracking visits to the Affiliation section
-    const visitsKey = 'mz_affiliation_visits';
-    const closedKey = 'mz_affiliation_notif_closed';
-    
-    const currentVisits = parseInt(localStorage.getItem(visitsKey) || '0');
-    const isClosed = localStorage.getItem(closedKey) === 'true';
-    
-    // Increment visit count
-    const newVisits = currentVisits + 1;
-    localStorage.setItem(visitsKey, newVisits.toString());
-    
-    // Condition: 2nd visit or more AND not closed before
-    if (newVisits >= 2 && !isClosed) {
-      // Delay for better visual impact (10 seconds as requested)
-      const timer = setTimeout(() => {
-        setIsVisible(true);
-      }, 10000);
-      return () => clearTimeout(timer);
+    // Logic to count entries to the affiliation tab
+    if (activeTab === 'affiliation') {
+      const sessionEntryKey = 'mz_affiliation_session_entry_active';
+      const isAlreadyCountedThisEntry = sessionStorage.getItem(sessionEntryKey);
+
+      if (!isAlreadyCountedThisEntry) {
+        const visitCountKey = 'mz_affiliation_visits';
+        const currentVisits = parseInt(localStorage.getItem(visitCountKey) || '0');
+        const newCount = currentVisits + 1;
+        localStorage.setItem(visitCountKey, newCount.toString());
+        sessionStorage.setItem(sessionEntryKey, 'true');
+      }
+    } else {
+      // Reset the entry flag when leaving the tab
+      sessionStorage.removeItem('mz_affiliation_session_entry_active');
     }
-  }, []);
+  }, [activeTab]);
+
+  useEffect(() => {
+    // Logic to show/hide the notification based on visit count
+    if (activeTab === 'affiliation' && !hasBeenClosedInSession) {
+      const visitCountKey = 'mz_affiliation_visits';
+      const count = parseInt(localStorage.getItem(visitCountKey) || '0');
+      
+      if (count >= 2) {
+        const timer = setTimeout(() => {
+          setIsVisible(true);
+        }, 10000); // 10s delay as requested
+        return () => clearTimeout(timer);
+      }
+    } else {
+      setIsVisible(false);
+    }
+  }, [activeTab, hasBeenClosedInSession]);
 
   const handleClose = () => {
     setIsVisible(false);
-    // Persist the closed state so it doesn't reappear immediately
-    localStorage.setItem('mz_affiliation_notif_closed', 'true');
-    setHasBeenClosed(true);
+    setHasBeenClosedInSession(true);
   };
 
   return (
     <AnimatePresence>
-      {isVisible && !hasBeenClosed && (
+      {isVisible && (
         <motion.div
-          initial={{ x: -400, opacity: 0 }}
+          initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          exit={{ x: -400, opacity: 0 }}
+          exit={{ x: -100, opacity: 0, transition: { duration: 0.3 } }}
           transition={{ 
-            type: "spring", 
-            stiffness: 100, 
-            damping: 20,
-            duration: 0.8 
+            duration: 0.8, 
+            ease: [0.16, 1, 0.3, 1],
+            opacity: { duration: 0.5 }
           }}
-          className="fixed top-24 left-4 md:left-8 z-[100] max-w-[420px] w-[calc(100%-2rem)]"
+          className="fixed top-24 left-4 z-[100] max-w-[380px] w-[calc(100%-2rem)]"
         >
-          <div className="relative overflow-hidden rounded-[2rem] bg-[#050505] border border-yellow-600/30 shadow-[0_30px_60px_rgba(0,0,0,0.8)] p-8 group">
-            {/* Premium Background Effects */}
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-900/30 via-transparent to-transparent pointer-events-none"></div>
-            <div className="absolute -top-24 -left-24 w-48 h-48 bg-violet-600/10 blur-[80px] rounded-full pointer-events-none"></div>
+          <div className="relative overflow-hidden rounded-2xl border border-[#D4AF37]/40 bg-[#050505] shadow-[0_20px_50px_rgba(0,0,0,0.8)] shadow-violet-900/20 backdrop-blur-md">
+            {/* Royal Dark Gradient Background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-violet-950/30 via-black to-black pointer-events-none" />
             
-            {/* Close Button */}
-            <button 
-              onClick={handleClose}
-              className="absolute top-6 right-6 text-neutral-500 hover:text-white transition-colors z-20"
-              aria-label="Fermer"
-            >
-              <X size={20} />
-            </button>
+            {/* Content Container */}
+            <div className="relative p-5 flex flex-col gap-4">
+              {/* Close Button */}
+              <button 
+                onClick={handleClose}
+                className="absolute top-3 right-3 p-1 text-gray-500 hover:text-[#D4AF37] hover:bg-white/5 rounded-full transition-all"
+                aria-label="Fermer"
+              >
+                <X size={16} />
+              </button>
 
-            <div className="relative z-10 space-y-6">
-              {/* Header */}
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-600 to-violet-800 border border-violet-400/30 flex items-center justify-center text-white shadow-lg shadow-violet-900/40">
-                  <Sparkles size={24} />
+              {/* Header with Icon */}
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-violet-700 to-violet-900 flex items-center justify-center border border-[#D4AF37]/30 shadow-lg shadow-violet-900/50">
+                  <Lightbulb size={20} className="text-[#D4AF37] animate-pulse" />
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-yellow-600">Exclusivité MZ+</span>
-                  <span className="text-xs font-bold text-neutral-400 uppercase tracking-widest">Opportunité Détectée</span>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="space-y-4">
-                <p className="text-base text-white font-bold leading-relaxed">
-                  💡 Tu fais peut-être déjà de l’affiliation… mais sans vrais résultats.
-                </p>
-                
-                <p className="text-sm text-neutral-300 leading-relaxed font-medium">
-                  Certains ambassadeurs ont généré plus de <span className="text-yellow-500 font-black">100 000 FCFA</span> simplement en appliquant la bonne méthode.
-                </p>
-                
-                <div className="flex items-center gap-3 py-2 px-4 bg-violet-600/10 rounded-xl border border-violet-500/20 w-fit">
-                  <p className="text-[11px] font-black uppercase tracking-wider text-violet-300">
-                    🔓 Passe au niveau supérieur pour découvrir la stratégie.
+                <div className="flex-1 pr-4">
+                  <p className="text-white text-[13px] leading-relaxed font-semibold">
+                    Tu peux faire beaucoup plus avec l’affiliation.
+                  </p>
+                  <p className="text-gray-400 text-[12px] mt-1">
+                    Certains ambassadeurs ont généré plus de <span className="text-[#D4AF37] font-bold">100 000 FCFA</span> avec la bonne stratégie.
                   </p>
                 </div>
               </div>
 
-              {/* Action Button */}
-              <button className="group/btn relative w-full py-5 bg-violet-700 hover:bg-violet-600 text-white rounded-2xl font-black uppercase text-[12px] tracking-[0.25em] transition-all duration-300 border border-yellow-600/40 shadow-[0_15px_30px_rgba(124,58,237,0.4)] active:scale-[0.98] flex items-center justify-center gap-4 overflow-hidden">
-                {/* Shimmer effect on button */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:animate-shimmer pointer-events-none"></div>
+              {/* Call to Action Text */}
+              <div className="flex items-center gap-2 px-1">
+                <div className="w-5 h-5 rounded-full bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/20">
+                  <Lock size={10} className="text-[#D4AF37]" />
+                </div>
+                <span className="text-violet-300 text-[11px] font-bold uppercase tracking-wider">
+                  Passe au niveau supérieur pour découvrir comment.
+                </span>
+              </div>
+
+              {/* Premium Button - Dark & Gold Version with Pulse Animation */}
+              <motion.button
+                onClick={() => {
+                  onUpgrade();
+                  handleClose();
+                }}
+                animate={{ 
+                  scale: [1, 1.02, 1],
+                  boxShadow: [
+                    "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+                    "0 10px 25px -3px rgba(139, 92, 246, 0.3)",
+                    "0 10px 15px -3px rgba(0, 0, 0, 0.1)"
+                  ]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+                className="group relative w-full py-3 rounded-xl bg-violet-900 hover:bg-violet-800 border border-[#D4AF37]/60 text-white font-bold text-sm transition-all duration-500 flex items-center justify-center gap-2 overflow-hidden shadow-xl"
+              >
+                {/* Shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
                 
                 <span className="relative z-10">Passez au niveau supérieur</span>
-                <TrendingUp size={18} className="relative z-10 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
-              </button>
+                <ChevronRight size={16} className="relative z-10 group-hover:translate-x-1 transition-transform duration-300 text-[#D4AF37]" />
+              </motion.button>
             </div>
-            
-            {/* Metallic Gold Bottom Border */}
-            <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-600/60 to-transparent"></div>
+
+            {/* Elegant Gold Metallic Bottom Border */}
+            <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent opacity-80" />
           </div>
         </motion.div>
       )}

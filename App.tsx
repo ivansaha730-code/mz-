@@ -26,7 +26,7 @@ import { PrivateMessagingMain } from './components/features/messagerie-privee/Pr
 import { PushDisplay } from './components/features/admin-push-notifications/PushDisplay.tsx';
 import { AnnouncementOverlay } from './components/features/marketing-announcements/AnnouncementOverlay.tsx';
 import { AffiliationGuide } from './components/guides/AffiliationGuide.tsx';
-import { AffiliationPremiumNag } from './components/features/mz-plus-offer/AffiliationPremiumNag.tsx';
+import { SlideNotificationAffiliation } from './components/features/SlideNotificationAffiliation.tsx';
 
 const ADMIN_EMAILS = [
   'equipemzplus@gmail.com',
@@ -53,6 +53,7 @@ const App: React.FC = () => {
     if (session && userProfile && !localStorage.getItem('mz_guide_completed')) {
       const timer = setTimeout(() => {
         setIsGuideActive(true);
+        localStorage.setItem('mz_guide_completed', 'true');
       }, 3000);
       return () => clearTimeout(timer);
     }
@@ -152,7 +153,6 @@ const App: React.FC = () => {
   const isAdmin = userProfile?.is_admin === true || !!userProfile?.admin_role;
 
   return (
-    <>
     <DashboardLayout 
       activeTab={activeTab} 
       setActiveTab={setActiveTab} 
@@ -164,13 +164,19 @@ const App: React.FC = () => {
       
       <PushDisplay profile={userProfile} />
       <AnnouncementOverlay profile={userProfile} onNavigate={(tab) => setActiveTab(tab as TabId)} />
+      <SlideNotificationAffiliation activeTab={activeTab} onUpgrade={() => setActiveTab('flash_offer')} />
 
       {activeTab === 'flash_offer' && <MZPlusFlashOfferOverlay profile={userProfile} onUpgrade={() => setActiveTab('upgrade')} isFullPage={true} />}
       {activeTab === 'dashboard' && (
         <GlobalView 
           profile={userProfile} 
           onSwitchTab={setActiveTab} 
-          onStartGuide={() => setIsGuideActive(true)}
+          onStartGuide={() => {
+            if (!localStorage.getItem('mz_guide_completed')) {
+              setIsGuideActive(true);
+              localStorage.setItem('mz_guide_completed', 'true');
+            }
+          }}
           activeCategory={activeCategory}
           setActiveCategory={setActiveCategory}
         />
@@ -195,10 +201,6 @@ const App: React.FC = () => {
       {activeTab === 'luna_chat' && <LunaChatPage profile={userProfile} onUpgrade={() => setActiveTab('flash_offer')} />}
       {activeTab === 'admin' && isAdmin && <AdminPanel adminProfile={userProfile} lastUpdateSignal={lastUpdateSignal} onRefresh={triggerRefresh} />}
     </DashboardLayout>
-
-    <div className="fixed top-0 left-0 z-[10000] bg-red-500 text-white p-2">TEST RENDER</div>
-    <AffiliationPremiumNag onUpgrade={() => setActiveTab('upgrade')} />
-    </>
   );
 };
 
