@@ -15,13 +15,14 @@ export const RPAGuide: React.FC<RPAGuideProps> = ({ isActive, onComplete }) => {
 
   const getTargetId = () => {
     switch (step) {
-      case 0: return null; // Intro panel
-      case 1: return 'rpa-input-link';
-      case 2: return 'rpa-submit-btn';
-      case 3: return 'rpa-quota-badge';
-      case 4: return 'rpa-balance-card';
-      case 5: return 'rpa-cashout-btn';
-      case 6: return 'rpa-history-log';
+      case 0: return null; // Welcome panel
+      case 1: return null; // Intro panel
+      case 2: return 'rpa-input-link';
+      case 3: return 'rpa-submit-btn';
+      case 4: return 'rpa-quota-badge';
+      case 5: return 'rpa-balance-card';
+      case 6: return 'rpa-cashout-btn';
+      case 7: return 'rpa-history-log';
       default: return null;
     }
   };
@@ -29,7 +30,7 @@ export const RPAGuide: React.FC<RPAGuideProps> = ({ isActive, onComplete }) => {
   const targetId = getTargetId();
   const targetRect = useGuidePosition(targetId);
 
-  const isTooltipStep = (step === 1 || step === 2 || step === 3 || step === 4 || step === 5 || step === 6);
+  const isTooltipStep = (step >= 2);
 
   useEffect(() => {
     let activeTimer: number | null = null;
@@ -48,10 +49,8 @@ export const RPAGuide: React.FC<RPAGuideProps> = ({ isActive, onComplete }) => {
         const checkElement = () => {
           const element = document.getElementById(targetId);
           if (element) {
-            // For tooltips, we wait until the element is in DOM
-            // We don't strictly need targetRect here to start the timer, 
-            // but we need the element to scroll to it.
-            const yOffset = -200; 
+            // Smooth scroll with offset for better visibility
+            const yOffset = -250; // Increased offset for better mobile visibility
             const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
             window.scrollTo({ top: y, behavior: 'smooth' });
             
@@ -81,13 +80,14 @@ export const RPAGuide: React.FC<RPAGuideProps> = ({ isActive, onComplete }) => {
     }
 
     return cleanup;
-  }, [isActive, targetId, step]); // Removed targetRect and isTooltipStep from dependencies
+  }, [isActive, targetId, step]);
 
   if (!isActive || !isReady) return null;
 
   const messages = [
     "Tu es maintenant dans la section RPA (Revenu Par Vidéo).\n\nIci, tu gagnes de l’argent grâce aux vidéos que tu crées et publies sur les réseaux sociaux.",
-    "C'est ici que tu colles le lien de ta vidéo (TikTok ou Reels) pour qu'elle soit vérifiée.",
+    "Comment gagner de l’argent avec le RPA ?\n\nC’est simple.\n\nCopiez le lien de la vidéo que vous voulez utiliser pour être rémunéré.",
+    "Copiez le lien de la vidéo dans cette section.",
     "Une fois le lien collé, clique sur 'Valider ma vidéo' pour soumettre ta demande.",
     "Tu as une limite de 3 vidéos par jour. Assure-toi qu'elles respectent les règles pour être validées.",
     "Ici, tu peux suivre tes points accumulés et tes vidéos en attente de validation.",
@@ -102,7 +102,7 @@ export const RPAGuide: React.FC<RPAGuideProps> = ({ isActive, onComplete }) => {
         isVisible={isActive && isReady} 
         message={messages[step]} 
         targetRect={targetRect}
-        variant={step === 0 ? 'panel' : 'tooltip'}
+        variant={(step === 0 || step === 1) ? 'panel' : 'tooltip'}
         onNext={step < messages.length - 1 ? () => {
           setStep(step + 1);
           setIsReady(false);

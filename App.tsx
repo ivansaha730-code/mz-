@@ -26,6 +26,7 @@ import { PrivateMessagingMain } from './components/features/messagerie-privee/Pr
 import { PushDisplay } from './components/features/admin-push-notifications/PushDisplay.tsx';
 import { AnnouncementOverlay } from './components/features/marketing-announcements/AnnouncementOverlay.tsx';
 import { AffiliationGuide } from './components/guides/AffiliationGuide.tsx';
+import { RPAGuide } from './components/guides/RPAGuide.tsx';
 import { SlideNotificationAffiliation } from './components/features/SlideNotificationAffiliation.tsx';
 
 const ADMIN_EMAILS = [
@@ -47,6 +48,7 @@ const App: React.FC = () => {
   const [customerProduct, setCustomerProduct] = useState<Product | null>(null);
   const [purchaseStep, setPurchaseStep] = useState<'view' | 'processing' | 'success'>('view');
   const [isGuideActive, setIsGuideActive] = useState(false);
+  const [isRPAGuideActive, setIsRPAGuideActive] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -138,6 +140,15 @@ const App: React.FC = () => {
     checkProduct();
   }, []);
 
+  useEffect(() => {
+    if (activeTab === 'rpa' && !localStorage.getItem('mz_rpa_guide_completed')) {
+      const timer = setTimeout(() => {
+        setIsRPAGuideActive(true);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [activeTab]);
+
   const triggerRefresh = () => { if (session?.user?.id) fetchUserData(session.user.id, session.user.email); };
 
   if (loading || !isProductChecked) return (
@@ -187,6 +198,10 @@ const App: React.FC = () => {
         activeCategory={activeCategory}
         activeTab={activeTab}
       />
+      <RPAGuide 
+        isActive={isRPAGuideActive} 
+        onComplete={() => setIsRPAGuideActive(false)} 
+      />
       {activeTab === 'recompense' && <RewardFeature profile={userProfile} />}
       {activeTab === 'private_chat' && <EspacePrive profile={userProfile} />}
       {activeTab === 'private_messaging' && <PrivateMessagingMain profile={userProfile} />}
@@ -195,7 +210,17 @@ const App: React.FC = () => {
       {activeTab === 'team' && <TeamTab profile={userProfile} teamCount={teamCount} onSwitchTab={setActiveTab} />}
       {activeTab === 'coaching' && <CoachingTab profile={userProfile} onSwitchTab={setActiveTab} />}
       {activeTab === 'formation' && <FormationTab profile={userProfile} onSwitchTab={setActiveTab} />}
-      {activeTab === 'rpa' && <RPADashboard profile={userProfile} onRefresh={triggerRefresh} onSwitchTab={setActiveTab} />}
+      {activeTab === 'rpa' && (
+        <RPADashboard 
+          profile={userProfile} 
+          onRefresh={triggerRefresh} 
+          onSwitchTab={setActiveTab} 
+          onStartGuide={() => {
+            localStorage.removeItem('mz_rpa_guide_completed');
+            setIsRPAGuideActive(true);
+          }}
+        />
+      )}
       {activeTab === 'suggestions' && <SuggestionsTab profile={userProfile} />}
       {activeTab === 'upgrade' && <UpgradeTab />}
       {activeTab === 'luna_chat' && <LunaChatPage profile={userProfile} onUpgrade={() => setActiveTab('flash_offer')} />}

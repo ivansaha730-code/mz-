@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Video, Send, Loader2, Target, Link, CheckCircle, ArrowRightCircle, Sparkles, ShieldCheck } from 'lucide-react';
+import { Video, Send, Loader2, Target, Link, CheckCircle, ArrowRightCircle, Sparkles, ShieldCheck, HelpCircle } from 'lucide-react';
 import { supabase } from '../../../services/supabase.ts';
 import { UserProfile } from '../../../types.ts';
 import { RpaLayout } from './RpaLayout.tsx';
@@ -8,35 +8,22 @@ import { RpaStats } from './RpaStats.tsx';
 import { RpaHistory } from './RpaHistory.tsx';
 import { RpaCard } from './RpaCard.tsx';
 import { ConversionModal } from '../../UI.tsx';
-import { RPAGuide } from './guide/RPAGuide.tsx';
 
 interface RpaDashboardProps {
   profile: UserProfile | null;
   onRefresh?: () => void;
   onSwitchTab?: (tab: any) => void;
+  onStartGuide?: () => void;
 }
 
-export const RpaDashboard: React.FC<RpaDashboardProps> = ({ profile, onRefresh, onSwitchTab }) => {
+export const RpaDashboard: React.FC<RpaDashboardProps> = ({ profile, onRefresh, onSwitchTab, onStartGuide }) => {
   const [link, setLink] = useState('');
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
-  const [isGuideActive, setIsGuideActive] = useState(false);
 
   const isMzPlus = profile?.user_level === 'niveau_mz_plus';
-
-  useEffect(() => {
-    // Trigger guide after 3 seconds if not completed
-    // Removed isMzPlus check to allow all users to see the guide (or for easier testing)
-    const guideCompleted = localStorage.getItem('mz_rpa_guide_v1_completed');
-    if (!guideCompleted) {
-      const timer = setTimeout(() => {
-        setIsGuideActive(true);
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
-  }, []);
 
   const fetchRpaData = useCallback(async () => {
     if (!profile?.id) return;
@@ -124,13 +111,23 @@ export const RpaDashboard: React.FC<RpaDashboardProps> = ({ profile, onRefresh, 
             </h2>
          </div>
          
-         <div id="rpa-cashout-btn">
-            <button 
-              onClick={() => isMzPlus ? alert("Préparation du virement...") : setShowPremiumModal(true)}
-              className="flex items-center gap-3 px-6 py-3.5 bg-yellow-600 text-black rounded-xl font-black uppercase text-[9px] tracking-widest shadow-xl hover:bg-yellow-500 transition-all active:scale-95"
-            >
-               Retirer mes gains <ArrowRightCircle size={16} />
-            </button>
+         <div className="flex flex-col items-end gap-4">
+            {onStartGuide && (
+              <button 
+                onClick={onStartGuide}
+                className="text-white font-black uppercase text-[10px] tracking-[0.2em] flex items-center gap-2 hover:text-purple-400 transition-colors"
+              >
+                <HelpCircle size={14} className="text-purple-500" /> REVOIR LE GUIDE
+              </button>
+            )}
+            <div id="rpa-cashout-btn">
+               <button 
+                 onClick={() => isMzPlus ? alert("Préparation du virement...") : setShowPremiumModal(true)}
+                 className="flex items-center gap-3 px-6 py-3.5 bg-yellow-600 text-black rounded-xl font-black uppercase text-[9px] tracking-widest shadow-xl hover:bg-yellow-500 transition-all active:scale-95"
+               >
+                  Retirer mes gains <ArrowRightCircle size={16} />
+               </button>
+            </div>
          </div>
       </header>
 
@@ -195,11 +192,6 @@ export const RpaDashboard: React.FC<RpaDashboardProps> = ({ profile, onRefresh, 
            MZ+ Verification System v5.2
          </p>
       </footer>
-
-      <RPAGuide 
-        isActive={isGuideActive} 
-        onComplete={() => setIsGuideActive(false)} 
-      />
     </RpaLayout>
   );
 };
